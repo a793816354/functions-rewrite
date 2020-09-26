@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // let arr = [1,2,3]
+      // let result = arr.map(function(item,index,self){
+      //     return item+1
+      // })
+      // console.log(result)
+
+      //重写map函数
+      if (!Array.prototype.map) {
+        Array.prototype.map = function(f) {
+          if (f && typeof f === "function") {
+            let arr = [];
+            for (let i = 0; i < this.length; i++) {
+              //因为其他引用类型可能通过call或者apply使用该函数，所以此处加点判断
+              if (i in this) {
+                //防止某些对象只有lenth属性而没有序号属性
+                arr.push(f(this[i], i, this));
+              }
+            }
+            console.log("执行了");
+            return arr;
+          } else {
+            throw new Error(typeof f + " is not a function");
+          }
+        };
+      }
+
+      //使用:
+      let arr = [1, 2, 3];
+      let result = arr.map(function(item, index, self) {
+        return item + 1;
+      });
+      console.log(result);
+    </script>
+  </body>
+</html>

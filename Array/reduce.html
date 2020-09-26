@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      let factorial = function(pre, now) {
+        return pre * now;
+      };
+      let arr = [1,2,3,4];
+      let result = arr.reduce(factorial)
+      console.log(result) //24
+
+      console.log([1].reduce(factorial)) //1
+
+      console.log([].reduce(factorial)) //报错:Uncaught TypeError: Reduce of empty array with no initial value
+
+      console.log([].reduce()) //报错:undefined is not a function
+
+      // 重写reduce
+      if(!Array.prototype.reduce){
+      Array.prototype.reduce = function(f) {
+        //可能会有其他引用类型通过call或者apply使用本函数,所以判断应该精确些
+        if (f&&typeof f === "function") {
+          if (this.length > 0 && this[0]) {
+            let total = this[0];
+            for (let i = 1; i < this.length; i++) {
+              if (i in this) {
+                total = f(total, this[i]);
+              }
+            }
+            return total;
+          } else {
+            throw new Error(
+              "Uncaught TypeError: Reduce of empty array with no initial value"
+            );
+          }
+        } else {
+            throw new Error(typeof f+" is not a function")
+        }
+      };
+      }
+
+      let arr = [1,2,3,4];
+      let result = arr.reduce(factorial)
+      console.log(result) //24
+
+      console.log([1].reduce(factorial)) //1
+
+      console.log([1].reduce()) //undefined is not a function
+
+      console.log([1].reduce("ss")) //string is not a function
+
+      console.log([].reduce(factorial)) //报错:Uncaught TypeError: Reduce of empty array with no initial value
+
+      let obj = {length:20};
+      let result = Array.prototype.reduce.call(obj,factorial)
+      console.log(result)  ////报错:Uncaught TypeError: Reduce of empty array with no initial value 因为无obj[0]
+
+      let obj = {0:1,1:2,2:3,length:20};
+      let result = Array.prototype.reduce.call(obj,factorial)
+      console.log(result)  //6，因为加了序号判断,但如果序号是断的还是会执行
+
+      let obj = {0:1,1:2,2:3,length:-5};
+      let result = Array.prototype.reduce.call(obj,factorial)
+      console.log(result)  //Uncaught TypeError: Reduce of empty array with no initial value
+
+      // 类数组
+      let exp = function() {
+       let result = Array.prototype.reduce.call(arguments, factorial);
+       console.log(result);
+      };
+      exp(2, 5, 6);  //60
+      exp(1,2,3,4,5);  //120
+      
+    </script>
+  </body>
+</html>
